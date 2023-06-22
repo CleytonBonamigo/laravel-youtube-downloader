@@ -1,0 +1,17 @@
+{
+    "name": "cleytonbonamigo/laravel-youtube-downloader",
+    "description": "YouTube Downloader for Laravel 10 and up",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Cleytonbonamigo\\LaravelYoutubeDownloader\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Cleyton Bonamigo",
+            "email": "cleytonbonamigo@gmail.com"
+        }
+    ],
+    "require": {}
+}
