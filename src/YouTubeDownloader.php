@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelYoutube;
+namespace CleytonBonamigo\LaravelYoutuberDownloader;
 
 class YouTubeDownloader
 {
