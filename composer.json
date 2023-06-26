@@ -12,12 +12,12 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelYoutube\\": "src/"
+            "CleytonBonamigo\\LaravelYoutubeDownloader\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaravelYoutube\\Tests\\": "tests"
+            "CleytonBonamigo\\LaravelYoutubeDownloader\\Tests\\": "tests"
         }
     },
     "authors": [
