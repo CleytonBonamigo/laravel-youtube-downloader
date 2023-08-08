@@ -42,4 +42,27 @@ class Utils
             return $array;
         }
     }
+
+    /**
+     * Returns the absolute url
+     *
+     * @param $url
+     * @param $domain
+     * @return string
+     */
+    public static function relativeToAbsoluteUrl($url, $domain): string
+    {
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        $scheme = $scheme ? $scheme : 'http';
+
+        // relative protocol?
+        if (strpos($url, '//') === 0) {
+            return $scheme . '://' . substr($url, 2);
+        } elseif (strpos($url, '/') === 0) {
+            // relative path?
+            return $domain . $url;
+        }
+
+        return $url;
+    }
 }

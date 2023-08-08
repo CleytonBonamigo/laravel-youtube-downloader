@@ -9,16 +9,15 @@ use CleytonBonamigo\LaravelYoutubeDownloader\Models\YouTubeConfigData;
 use CleytonBonamigo\LaravelYoutubeDownloader\Responses\PlayerApiResponse;
 use CleytonBonamigo\LaravelYoutubeDownloader\Responses\WatchVideoPage;
 use CleytonBonamigo\LaravelYoutubeDownloader\Utils\Utils;
-use GuzzleHttp\Client;
 
 class YouTubeDownloader
 {
-    protected Client $client;
+    protected BrowserClient $client;
     protected string $videoId;
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new BrowserClient();
     }
 
     /**
@@ -108,7 +107,9 @@ class YouTubeDownloader
 
         // the most reliable way of fetching all download links no matter what
         $playerResponse = $this->getPlayerApiResponse($youTubeConfigData);
+        $playerUrl = $page->getPlayerScriptUrl();
 
-        dd($playerResponse);
+        $response = $this->client->getStorageDirectory();
+        dd($playerUrl, $response);
     }
 }
