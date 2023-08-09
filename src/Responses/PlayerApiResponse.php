@@ -8,11 +8,16 @@ class PlayerApiResponse extends HttpResponse
 {
     /**
      * @param string $key
-     * @return string|null
+     * @return null|string|array
      */
-    protected function query(string $key): ?string
+    protected function query(string $key): mixed
     {
-        return Utils::arrayGet($this->getJson(), $key);
+        //try{
+            return Utils::arrayGet($this->getJson(), $key);
+        //}catch (\Throwable $e){
+        //    file_put_contents(__DIR__.'log.txt', json_encode($this->getJson()));
+        //    dd($e->getMessage(), $key);
+        //}
     }
 
     /**

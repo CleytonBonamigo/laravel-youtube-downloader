@@ -27,9 +27,9 @@ class Utils
      * @param $array
      * @param string $key
      * @param string|null $default
-     * @return string|null
+     * @return null|string|array
      */
-    public static function arrayGet($array, string $key, string $default = null): ?string
+    public static function arrayGet($array, string $key, string $default = null): mixed
     {
         foreach (explode('.', $key) as $segment){
             if(is_array($array) && array_key_exists($segment, $array)){
@@ -41,6 +41,8 @@ class Utils
 
             return $array;
         }
+
+        return null;
     }
 
     /**
