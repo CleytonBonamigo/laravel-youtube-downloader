@@ -109,7 +109,10 @@ class YouTubeDownloader
         $playerResponse = $this->getPlayerApiResponse($youTubeConfigData);
         $playerUrl = $page->getPlayerScriptUrl();
 
-        $response = $this->client->getStorageDirectory();
-        dd($playerUrl, $response);
+        //$response = $this->client->getCached($playerUrl);
+
+        $parser = PlayerResponseParser::createFrom($playerResponse);
+        $parser->parseLinks();
+        dd($playerUrl);
     }
 }
