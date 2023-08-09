@@ -12,12 +12,7 @@ class PlayerApiResponse extends HttpResponse
      */
     protected function query(string $key): mixed
     {
-        //try{
-            return Utils::arrayGet($this->getJson(), $key);
-        //}catch (\Throwable $e){
-        //    file_put_contents(__DIR__.'log.txt', json_encode($this->getJson()));
-        //    dd($e->getMessage(), $key);
-        //}
+        return Utils::arrayGet($this->getJson(), $key);
     }
 
     /**
