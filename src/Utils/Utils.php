@@ -45,4 +45,29 @@ class Utils
 
         return $url;
     }
+
+    /**
+     * Parses from query string
+     *
+     * @param $string
+     * @return array
+     */
+    public static function parseQueryString($string): array
+    {
+        $result = [];
+        parse_str($string, $result);
+        return $result;
+    }
+
+    /**
+     * Resets the Array
+     *
+     * @param $array
+     * @param $callback
+     * @return array
+     */
+    public static function arrayFilterReset($array, $callback): array
+    {
+        return array_values(array_filter($array, $callback));
+    }
 }

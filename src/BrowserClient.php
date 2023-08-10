@@ -3,6 +3,7 @@
 namespace CleytonBonamigo\LaravelYoutubeDownloader;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 
 class BrowserClient extends Client
 {
@@ -50,15 +51,15 @@ class BrowserClient extends Client
 
     /**
      * @param string $url
-     * @return string
+     * @return Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getCached(string $url): string
+    public function getCached(string $url): Response
     {
         $cachePath = sprintf('%s/%s', $this->getStorageDirectory(), $this->getCacheKey($url));
 
         if (file_exists($cachePath)){
-            return unserialize(file_get_contents($cachePath));
+            return new Response(200, [], unserialize(file_get_contents($cachePath)));
         }
 
         // Disable errors to handle outside
@@ -69,7 +70,7 @@ class BrowserClient extends Client
             file_put_contents($cachePath, serialize($content));
         }
 
-        return $content;
+        return new Response(200, $response->getHeaders(), $content);
     }
 
     /**

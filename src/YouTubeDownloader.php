@@ -5,10 +5,13 @@ namespace CleytonBonamigo\LaravelYoutubeDownloader;
 use CleytonBonamigo\LaravelYoutubeDownloader\Exceptions\TooManyRequestsException;
 use CleytonBonamigo\LaravelYoutubeDownloader\Exceptions\VideoNotFoundException;
 use CleytonBonamigo\LaravelYoutubeDownloader\Exceptions\YouTubeException;
+use CleytonBonamigo\LaravelYoutubeDownloader\Models\VideoDetails;
 use CleytonBonamigo\LaravelYoutubeDownloader\Models\YouTubeConfigData;
 use CleytonBonamigo\LaravelYoutubeDownloader\Responses\PlayerApiResponse;
+use CleytonBonamigo\LaravelYoutubeDownloader\Responses\VideoPlayerJs;
 use CleytonBonamigo\LaravelYoutubeDownloader\Responses\WatchVideoPage;
 use CleytonBonamigo\LaravelYoutubeDownloader\Utils\Utils;
+use GuzzleHttp\Psr7\Response;
 
 class YouTubeDownloader
 {
@@ -82,15 +85,17 @@ class YouTubeDownloader
     }
 
     /**
+     * Get the Download Links
+     *
      * @param string $videoUrl
      * @param array $options
-     * @return void
+     * @return DownloaderResponse
      * @throws TooManyRequestsException
      * @throws VideoNotFoundException
      * @throws YouTubeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getDownloadLinks(string $videoUrl, array $options = [])
+    public function getDownloadLinks(string $videoUrl, array $options = []): DownloaderResponse
     {
         $this->videoId = Utils::extractVideoId($videoUrl);
         $page = $this->getPage();
@@ -108,11 +113,15 @@ class YouTubeDownloader
         // the most reliable way of fetching all download links no matter what
         $playerResponse = $this->getPlayerApiResponse($youTubeConfigData);
         $playerUrl = $page->getPlayerScriptUrl();
-
-        //$response = $this->client->getCached($playerUrl);
+        $response = $this->client->getCached($playerUrl);
+        $player = new VideoPlayerJs($response);
 
         $parser = PlayerResponseParser::createFrom($playerResponse);
-        $parser->parseLinks();
-        dd($playerUrl);
+        $parser->setPlayerJsResponse($player);
+
+        return new DownloaderResponse(
+            $parser->parseLinks(),
+            VideoDetails::fromPlayerResponseArray($playerResponse->getJson())
+        );
     }
 }
