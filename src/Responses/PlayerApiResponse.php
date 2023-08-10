@@ -2,7 +2,7 @@
 
 namespace CleytonBonamigo\LaravelYoutubeDownloader\Responses;
 
-use CleytonBonamigo\LaravelYoutubeDownloader\Utils\Utils;
+use Illuminate\Support\Arr;
 
 class PlayerApiResponse extends HttpResponse
 {
@@ -12,7 +12,7 @@ class PlayerApiResponse extends HttpResponse
      */
     protected function query(string $key): mixed
     {
-        return Utils::arrayGet($this->getJson(), $key);
+        return Arr::get($this->getJson(), $key);
     }
 
     /**

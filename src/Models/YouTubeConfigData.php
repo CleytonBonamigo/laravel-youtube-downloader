@@ -2,7 +2,7 @@
 
 namespace CleytonBonamigo\LaravelYoutubeDownloader\Models;
 
-use CleytonBonamigo\LaravelYoutubeDownloader\Utils\Utils;
+use Illuminate\Support\Arr;
 
 class YouTubeConfigData
 {
@@ -15,7 +15,7 @@ class YouTubeConfigData
 
     protected function query(string $key): string
     {
-        return Utils::arrayGet($this->data, $key);
+        return Arr::get($this->data, $key);
     }
 
     public function getApiKey(): ?string
