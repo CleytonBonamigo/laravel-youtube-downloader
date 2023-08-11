@@ -3,6 +3,7 @@
 namespace CleytonBonamigo\LaravelYoutubeDownloader\Models;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class VideoDetails
 {
@@ -42,6 +43,16 @@ class VideoDetails
     public function getTitle(): mixed
     {
         return Arr::get($this->videoDetails, 'title');
+    }
+
+    /**
+     * Get the File Name to save into the disk
+     *
+     * @return string
+     */
+    public function getFileName(): string
+    {
+        return Str::slug($this->getTitle());
     }
 
     /**

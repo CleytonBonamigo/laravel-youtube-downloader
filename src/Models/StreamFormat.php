@@ -2,6 +2,8 @@
 
 namespace CleytonBonamigo\LaravelYoutubeDownloader\Models;
 
+use CleytonBonamigo\LaravelYoutubeDownloader\Utils\VideoExtensions;
+
 class StreamFormat extends AbstractModel
 {
     public int $itag;
@@ -34,5 +36,15 @@ class StreamFormat extends AbstractModel
     public function hasRateBypass(): bool
     {
         return str_contains($this->url, 'ratebypass');
+    }
+
+    /**
+     * Gets the Video Extension to save the file
+     *
+     * @return string|null
+     */
+    public function getExtension(): ?string
+    {
+        return VideoExtensions::getExtension($this->getCleanMimeType());
     }
 }

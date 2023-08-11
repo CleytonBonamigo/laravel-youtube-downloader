@@ -70,4 +70,13 @@ class Utils
     {
         return array_values(array_filter($array, $callback));
     }
+
+    public static function formatPath(string $path = ''): string
+    {
+        if(!empty($path) && !str_ends_with($path, '/')){
+            return $path.'/';
+        }
+
+        return $path;
+    }
 }

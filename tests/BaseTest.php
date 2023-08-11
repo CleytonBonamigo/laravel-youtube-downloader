@@ -11,6 +11,8 @@ class BaseTest extends BaseTestCase
     public function test_get_download_links()
     {
         $downloader = new YouTubeDownloader();
-        dd($downloader->getDownloadLinks('https://www.youtube.com/watch?v=_ojDgx__IMw'));
+        $downloader->downloadVideo('https://www.youtube.com/watch?v=o5EJLl8h-E8');
+
+        //dd($downloaderResponse->getFirstCombinedFormat());
     }
 }

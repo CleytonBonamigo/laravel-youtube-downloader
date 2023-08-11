@@ -2,6 +2,7 @@
 
 namespace CleytonBonamigo\LaravelYoutubeDownloader;
 
+use CleytonBonamigo\LaravelYoutubeDownloader\Enums\UserAgents;
 use CleytonBonamigo\LaravelYoutubeDownloader\Exceptions\TooManyRequestsException;
 use CleytonBonamigo\LaravelYoutubeDownloader\Exceptions\VideoNotFoundException;
 use CleytonBonamigo\LaravelYoutubeDownloader\Exceptions\YouTubeException;
@@ -11,6 +12,8 @@ use CleytonBonamigo\LaravelYoutubeDownloader\Responses\PlayerApiResponse;
 use CleytonBonamigo\LaravelYoutubeDownloader\Responses\VideoPlayerJs;
 use CleytonBonamigo\LaravelYoutubeDownloader\Responses\WatchVideoPage;
 use CleytonBonamigo\LaravelYoutubeDownloader\Utils\Utils;
+use GuzzleHttp\Client;
+use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Response;
 
 class YouTubeDownloader
@@ -123,5 +126,65 @@ class YouTubeDownloader
             $parser->parseLinks(),
             VideoDetails::fromPlayerResponseArray($playerResponse->getJson())
         );
+    }
+
+    /**
+     * Download the Video of given URL to informed path
+     *
+     * @param string $videoUrl
+     * @param array $options
+     * @param string $path
+     * @return bool
+     * @throws TooManyRequestsException
+     * @throws VideoNotFoundException
+     * @throws YouTubeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function downloadVideo(string $videoUrl, array $options = [], string $path = __DIR__): bool
+    {
+        $links = $this->getDownloadLinks($videoUrl, $options);
+        $urls = [
+            $links->getFirstCombinedFormat()->url
+        ];
+        $path = Utils::formatPath($path) . $links->getInfo()->getFileName() . $links->getFirstCombinedFormat()->getExtension();
+
+        $client = new Client([
+            'allow_reditects' => [
+                'track_redirects' => true
+            ],
+            'verify' => false,
+            'headers' => [
+                'User-Agent' => UserAgents::CHROME->value
+            ]
+        ]);
+
+        // Can handle concurrent downloads
+        $request = function () use ($client, $urls, $path){
+            foreach ($urls as $url){
+                yield function ($poolOpts) use ($client, $url, $path){
+                    $reqOpts = array_merge($poolOpts, [
+                        'sink' => $path
+                    ]);
+
+                    return $client->getAsync($url, $reqOpts);
+                };
+            }
+        };
+
+        $pool = new Pool($client, $request(100), [
+            'concurrency' => 3, //Set limit of 3 concurrent
+            'fullfiled' => function(Response $response, $index){
+                // $url = $response->getHeader(\GuzzleHttp\RedirectMiddleware::HISTORY_HEADER);
+                //echo "Downloaded ", end($url), "<br/>\n";
+            },
+            'rejected' => function(\Exception $reason, $index){
+                $url = (string)$reason->getRequest()->getUri();
+                throw new \Exception("Failed to download {$url}: {$reason->getMessage()}");
+            }
+        ]);
+
+        $pool->promise()->wait();
+
+        return true;
     }
 }
